@@ -2,7 +2,6 @@ import random  # for generating random numbers (for flappy bird pipes)
 import sys  # if user wants to exit the game use sys.exit
 import pygame
 from pygame.locals import *  # basic pygame imports
-
 # Global variables for the game
 FPS = 32  # frames per seconf if less than lag feeling we get
 SCREENWIDTH = 289
@@ -16,19 +15,15 @@ PLAYER = 'gallery/sprites/bird.png'
 BACKGROUND = 'gallery/sprites/background.png'
 PIPE = 'gallery/sprites/pipe.png'
 LEADERBOARD='gallery/sprites/leader.png'
-score_list=[]
-myDig=[]
-#size_heap = 0
+score_list=[]#to get the bst nodes in order
+myDig=[]     #to convert into single digits-the score 
 class Node:
     def __init__(self, data):
-
         self.left = None
         self.right = None
         self.data = data
-
 # Insert method to create nodes
     def insert(self, data):
-
         if self.data:
             if data <= self.data:
                 if self.left is None:
@@ -50,14 +45,13 @@ class Node:
         score_list.append(self.data)
         if  self.left:
             self.left.PrintTree()
-      
 root=Node(0)
 def welcomeScreen():
     """
     Shows welcome images on the screen
     """
     # playerx = int(SCREENWIDTH / 2)  # players x position should be 1/5th thewidth from the left
-    playerx=129
+    playerx = int((SCREENWIDTH - GAME_SPRITES['player'].get_width()) / 2)
     # basically denotes x position of bird.Typecasted to integer for easier rendering rather than float
     playery = int((SCREENHEIGHT - GAME_SPRITES['player'].get_height()) / 2)
     messagex = int((SCREENWIDTH - GAME_SPRITES['message'].get_width()) / 2)
@@ -87,12 +81,6 @@ def scoreScreen():
     """
     Shows Leaderboard images on the screen
     """
-    # playerx = int(SCREENWIDTH / 2)  # players x position should be 1/5th thewidth from the left
-    # playerx=129
-    # # basically denotes x position of bird.Typecasted to integer for easier rendering rather than float
-    # playery = int((SCREENHEIGHT - GAME_SPRITES['player'].get_height()) / 2)
-    # messagex = int((SCREENWIDTH - GAME_SPRITES['message'].get_width()) / 2)
-    # messagey = int(SCREENHEIGHT * 0.13)
     basex = 0  # so that it starts from the start of the screen
     while True:
         for event in pygame.event.get():
@@ -322,5 +310,3 @@ if __name__ == "__main__":
         for num in score_list[:5]:
             myDig.append([int(x) for x in list(str(num))])
         scoreScreen()
-
-       
