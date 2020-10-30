@@ -15,131 +15,44 @@ GAME_SOUNDS = {}  # to play the sound
 PLAYER = 'gallery/sprites/bird.png'
 BACKGROUND = 'gallery/sprites/background.png'
 PIPE = 'gallery/sprites/pipe.png'
+LEADERBOARD='gallery/sprites/leader.png'
 score_list=[]
+myDig=[]
 #size_heap = 0
-class MaxHeap: 
-  
-    def __init__(self, maxsize): 
-          
-        self.maxsize = maxsize 
-        self.size = 0
-        self.Heap = [0] * (self.maxsize + 1) 
-        #self.Heap[0] = sys.maxsize 
-        self.FRONT = 1
-  
-    # Function to return the position of 
-    # parent for the node currently 
-    # at pos 
-    def parent(self, pos): 
-          
-        return pos // 2
-  
-    # Function to return the position of 
-    # the left child for the node currently 
-    # at pos 
-    def leftChild(self, pos): 
-          
-        return 2 * pos 
-  
-    # Function to return the position of 
-    # the right child for the node currently 
-    # at pos 
-    def rightChild(self, pos): 
-          
-        return (2 * pos) + 1
-  
-    # Function that returns true if the passed 
-    # node is a leaf node 
-    def isLeaf(self, pos): 
-          
-        if pos >= (self.size//2) and pos <= self.size: 
-            return True
-        return False
-  
-    # Function to swap two nodes of the heap 
-    def swap(self, fpos, spos): 
-          
-        self.Heap[fpos], self.Heap[spos] = (self.Heap[spos],  
-                                            self.Heap[fpos]) 
-  
-    # Function to heapify the node at pos 
-    def maxHeapify(self, pos): 
-  
-        # If the node is a non-leaf node and smaller 
-        # than any of its child 
-        if not self.isLeaf(pos): 
-            if (self.Heap[pos] < self.Heap[self.leftChild(pos)] or
-                self.Heap[pos] < self.Heap[self.rightChild(pos)]): 
-  
-                # Swap with the left child and heapify 
-                # the left child 
-                if (self.Heap[self.leftChild(pos)] >  
-                    self.Heap[self.rightChild(pos)]): 
-                    self.swap(pos, self.leftChild(pos)) 
-                    self.maxHeapify(self.leftChild(pos)) 
-  
-                # Swap with the right child and heapify 
-                # the right child 
-                else: 
-                    self.swap(pos, self.rightChild(pos)) 
-                    self.maxHeapify(self.rightChild(pos)) 
-  
-    # Function to insert a node into the heap 
-    def insert(self, element): 
-          
-        if self.size >= self.maxsize: 
-            return
-        self.size += 1
-        #size_heap += 1
-        print(self.size)
-        self.Heap[self.size] = element 
-  
-        current = self.size 
-  
-        while (self.Heap[current] >  
-               self.Heap[self.parent(current)]): 
-            self.swap(current, self.parent(current)) 
-            current = self.parent(current) 
-  
-    # Function to print the contents of the heap 
-    def Print(self): 
-        print(f"here {self.size} and {self.Heap}")
-        for i in range(1, (self.size // 2) + 1): 
-            print(" PARENT : " + str(self.Heap[i]) + 
-                  " LEFT CHILD : " + str(self.Heap[2 * i]) +
-                  " RIGHT CHILD : " + str(self.Heap[2 * i + 1])) 
-  
-    # Function to remove and return the maximum 
-    # element from the heap 
-    def extractMax(self): 
-  
-        popped = self.Heap[self.FRONT] 
-        self.Heap[self.FRONT] = self.Heap[self.size] 
-        self.size -= 1
-        self.maxHeapify(self.FRONT) 
-          
-        return popped 
-  
-# Driver Code 
-# if __name__ == "__main__": 
-      
-#     print('The maxHeap is ') 
-      
-#     maxHeap = MaxHeap(15) 
-#     maxHeap.insert(5) 
-#     maxHeap.insert(3) 
-#     maxHeap.insert(17) 
-#     maxHeap.insert(10) 
-#     maxHeap.insert(84) 
-#     maxHeap.insert(19) 
-#     maxHeap.insert(6) 
-#     maxHeap.insert(22) 
-#     maxHeap.insert(9) 
-  
-#     maxHeap.Print() 
-      
-#     print("The Max val is " + str(maxHeap.extractMax())) 
+class Node:
 
+    def __init__(self, data):
+
+        self.left = None
+        self.right = None
+        self.data = data
+
+# Insert method to create nodes
+    def insert(self, data):
+
+        if self.data:
+            if data <= self.data:
+                if self.left is None:
+                    self.left = Node(data)
+                else:
+                    self.left.insert(data)
+            elif data > self.data:
+                if self.right is None:
+                    self.right = Node(data)
+                else:
+                    self.right.insert(data)
+        else:
+            self.data = data
+# Print the tree
+    def PrintTree(self):
+        if self.right:
+            self.right.PrintTree()
+        #print( self.data)
+        score_list.append(self.data)
+        if  self.left:
+            self.left.PrintTree()
+      
+root=Node(0)
 def welcomeScreen():
     """
     Shows welcome images on the screen
@@ -171,7 +84,49 @@ def welcomeScreen():
                 pygame.display.update()  # unless and until this function is run ur screen wouldnt change
                 FPSCLOCK.tick(FPS)
 
+def scoreScreen():
+    """
+    Shows Leaderboard images on the screen
+    """
+    # playerx = int(SCREENWIDTH / 2)  # players x position should be 1/5th thewidth from the left
+    # playerx=129
+    # # basically denotes x position of bird.Typecasted to integer for easier rendering rather than float
+    # playery = int((SCREENHEIGHT - GAME_SPRITES['player'].get_height()) / 2)
+    # messagex = int((SCREENWIDTH - GAME_SPRITES['message'].get_width()) / 2)
+    # messagey = int(SCREENHEIGHT * 0.13)
+    basex = 0  # so that it starts from the start of the screen
+    while True:
+        for event in pygame.event.get():
+              # ges all the keystrokes pressed by the user
+            scorex=100
+            scorey=110+40
+            # coordinates are from top left corner always in pygame
+            SCREEN.blit(GAME_SPRITES['background'], (0, 0))
+            SCREEN.blit(GAME_SPRITES['leaderboard'], (40, 10))
+            for i in range(0,5):
+                width=0
+                for digit in myDig[i]:
+                    width += GAME_SPRITES['numbers'][digit].get_width()
+                Xoffset2 = (SCREENWIDTH - width) / 2
 
+                for digit in myDig[i]:
+                    SCREEN.blit(GAME_SPRITES['numbers'][digit], (Xoffset2,scorey))
+                    Xoffset2 += GAME_SPRITES['numbers'][digit].get_width() 
+                    #SCREEN.blit(GAME_SPRITES['leaderboard'], (scorex, scorey))
+                scorey+=76
+            pygame.display.update()  # unless and until this function is run ur screen wouldnt change
+            FPSCLOCK.tick(FPS)
+            # if user clicks on cross button close the game
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # keydown means keypressed
+                # QUIT IS pygame's event for quitting
+                pygame.quit()
+                sys.exit()
+            #     # if user presses space or up key start the game for him
+            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                # means now we gotta go to main game na hence now return
+                return
+            # else:  # else start blitting images
+               
 def mainGame():
     # print("In maingame")
     score = 0
@@ -219,8 +174,7 @@ def mainGame():
 
         crashTest = isCollide(playerx, playery, upperPipes, lowerPipes)  # function returns true if u crash
         if crashTest:
-            score_list.append(score)
-            #maxHeap.insert(score) 
+            root.insert(score)
             return
 
         # check for score
@@ -354,13 +308,20 @@ if __name__ == "__main__":
     # thus created a key value dictionary pair
 
     GAME_SPRITES['background'] = pygame.image.load(BACKGROUND).convert()
+    GAME_SPRITES['leaderboard'] = pygame.image.load(LEADERBOARD).convert()
     GAME_SPRITES['player'] = pygame.image.load(PLAYER).convert_alpha()
 
     while True:
-        maxHeap = MaxHeap(5) 
         welcomeScreen()  # the initial screen when user presses any button go to mainGame
         mainGame()  # main game function
         #print(score_list)
-        for scor in score_list:
-            maxHeap.insert(scor)
-        maxHeap.Print() 
+        score_list=[]
+        myDig=[]
+        root.PrintTree()
+        for i in range(0,4):
+            score_list.append(0)
+        for num in score_list[:5]:
+            myDig.append([int(x) for x in list(str(num))])
+        scoreScreen()
+
+       
