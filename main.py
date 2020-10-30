@@ -21,7 +21,8 @@ def welcomeScreen():
     """
     Shows welcome images on the screen
     """
-    playerx = int(SCREENWIDTH / 5)  # players x position should be 1/5th thewidth from the left
+    # playerx = int(SCREENWIDTH / 2)  # players x position should be 1/5th thewidth from the left
+    playerx=129
     # basically denotes x position of bird.Typecasted to integer for easier rendering rather than float
     playery = int((SCREENHEIGHT - GAME_SPRITES['player'].get_height()) / 2)
     messagex = int((SCREENWIDTH - GAME_SPRITES['message'].get_width()) / 2)
@@ -162,7 +163,7 @@ def isCollide(playerx, playery, upperPipes, lowerPipes):
         return True
     for pipe in upperPipes:
         pipeHeight = GAME_SPRITES['pipe'][0].get_height()
-        print(f"Pipe height variable is {pipeHeight} and playery is {playery}")
+        # print(f"Pipe height variable is {pipeHeight} and playery is {playery}")
         if (playery < pipeHeight + pipe['y'] and abs(playerx - pipe['x']) < GAME_SPRITES['pipe'][0].get_width()):
             GAME_SOUNDS['hit'].play()
             return True
